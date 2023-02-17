@@ -8,5 +8,16 @@ namespace PhysicsEngine {
         {
             return value + f * h;
         }
-    }
+
+        public static GameObject(GameObject current, GameObject[] gameObjects)
+        {
+            foreach (GameObject go in gameObjects)
+            {
+                float distance = Vector3.Distance(current.transform.position, go.transform.position);
+                if (distance <= radius)
+                {
+
+                }
+            }
+        }
 }

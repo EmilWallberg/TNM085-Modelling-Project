@@ -11,16 +11,4 @@ public class ball : KinematicBody
     {
         
     }
-
-    
-
-    GameObject CheckCollision(GameObject[] gameObjects) { 
-        foreach(GameObject go in gameObjects)
-        {
-            float distance = Vector3.Distance(this.transform.position, go.transform.position);
-            if (distance <= radius)
-            {
-
-            }
-    }
 }
