@@ -25,11 +25,22 @@ public class ball : KinematicBody
 
     private void Start()
     {
+
         inertia = (2 * mass * Mathf.Pow(radius, 2.0f)) / 5; // I = (2mr^2)/5 for sphere
     }
     // Update is called once per frame
     void Update()
     {
+    
+       foreach(var obj in PhysicsEngine.objectsInScene)
+        {
+            Vector3 normal;
+            if (PhysicsEngine.CheckCollision(GetComponent<MeshFilter>().mesh, obj.GetComponent<MeshFilter>().mesh,out normal)){
+                PhysicsEngine.ImpulsAng(gameObject, obj, normal);
+                Debug.Log("A fine hit");
+            }
+        }
+  
         Vector3 Force = Vector3.zero, torq = Vector3.zero;
         if (pushTime > 0)
         {

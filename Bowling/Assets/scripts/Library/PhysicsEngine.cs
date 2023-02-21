@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mos.PhysicsEngine
 {
+
+    
     public static class PhysicsEngine
     {
+      
+        public static List<GameObject> objectsInScene=new List<GameObject>();
         public static float gravity = 9.81f;
         public static Vector3 Euler(Vector3 value, Vector3 f, float h)
         {
@@ -126,7 +131,7 @@ namespace Mos.PhysicsEngine
 
 
         //list[0] = nya v1, //list[1] = nya w1,  //list[2] = nya v2, //list[3] = nya w2, 
-        public static List<Vector3> ImpulsAng(GameObject colidObj1, GameObject colidObj2)
+        public static List<Vector3> ImpulsAng(GameObject colidObj1, GameObject colidObj2, Vector3 collisionNorm)
         {
             List<Vector3> listOfVel = new List<Vector3>();
 
