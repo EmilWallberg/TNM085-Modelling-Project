@@ -6,18 +6,19 @@ using UnityEngine;
 public class pin : KinematicBody
 {
     // Start is called before the first frame update
-    public bool wasHit;
+
+ 
+
     void Start()
     {
-        PhysicsEngine.objectsInScene.Add(gameObject);
+        base.Start();
+        inertia = mass * Mathf.Pow(radius, 2.0f)/2;
     }
 
     public void Update()
     {
-        if(wasHit)
-        {
-            
-        }
+        base.Update();
+ 
     }
 
 }

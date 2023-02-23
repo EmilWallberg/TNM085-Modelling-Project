@@ -4,11 +4,8 @@ using UnityEngine;
 
 namespace Mos.PhysicsEngine
 {
-
-
     public static class PhysicsEngine
     {
-
         public static List<GameObject> objectsInScene = new List<GameObject>();
         public static float gravity = 9.81f;
         public static Vector3 Euler(Vector3 value, Vector3 f, float h)
@@ -17,7 +14,7 @@ namespace Mos.PhysicsEngine
         }
 
         //list[0] = nya v1, //list[1] = nya w1,  //list[2] = nya v2, //list[3] = nya w2, 
-        public static List<Vector3> ImpulsAng(GameObject colidObj1, GameObject colidObj2, Vector3 collisionNormal)
+        public static void ImpulsAng(GameObject colidObj1, GameObject colidObj2, Vector3 collisionNormal, Vector3 collisionPoint, out Vector3 linearImpuls, out Vector3 angularImpuls)
         {
             List<Vector3> listOfVel = new List<Vector3>();
 
@@ -33,11 +30,6 @@ namespace Mos.PhysicsEngine
             Vector3 pos1 = colidObj1.transform.position;
             Vector3 pos2 = colidObj2.transform.position;
 
-            //Temp
-            Vector3 collisionPoint = colidObj1.transform.position;
-            collisionPoint.x += colidObj1.GetComponent<KinematicBody>().radius;
-
-
             float fcr = 1;
             Vector3 vRelativeVelocity = v1 - v2;
             //Vector3 vColissionNormal = pos1 - pos2;
@@ -52,15 +44,22 @@ namespace Mos.PhysicsEngine
                 (Vector3.Dot(vColissionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint1, vColissionNormal) / I1, vColissionPoint1))) +
                 (Vector3.Dot(vColissionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint2, vColissionNormal) / I2, vColissionPoint2)))
                 ));
+            Debug.Log(J*collisionNormal);
 
+            linearImpuls = J * collisionNormal;
+            angularImpuls = (Vector3.Cross(vColissionPoint1, J * vColissionNormal));
+            /*
             Vector3 newV1 = v1 + (J * vColissionNormal) / m1;
             Vector3 newW1 = w1 + (Vector3.Cross(vColissionPoint1, J * vColissionNormal)) / m1;
-            Vector3 newV2 = v2 + (J * vColissionNormal) / m2; ;
-            Vector3 newW2 = w2 + (Vector3.Cross(vColissionPoint2, J * vColissionNormal)) / m2;
+            Vector3 newV2 = v2 - (J * vColissionNormal) / m2; ;
+            Vector3 newW2 = w2 - (Vector3.Cross(vColissionPoint2, J * vColissionNormal)) / m2;
+
+            Debug.Log("v2 = " + v2);
 
             listOfVel.Add(newV1); listOfVel.Add(newW1); listOfVel.Add(newV2); listOfVel.Add(newW2);
+            */
 
-            return listOfVel;
+
         }
 
         //list[0] = nya v1, //list[1] = nya v2,

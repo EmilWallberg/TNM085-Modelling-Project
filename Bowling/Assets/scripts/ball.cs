@@ -27,32 +27,14 @@ public class ball : KinematicBody
     bool hasHit =false;
     private void Start()
     {
-
+        base.Start();
         inertia = (2 * mass * Mathf.Pow(radius, 2.0f)) / 5; // I = (2mr^2)/5 for sphere
     }
     // Update is called once per frame
     void Update()
     {
-        /*if(transform.position.x >= 18&&!hasHit) {
-            
-            List<Vector3> impulsList = PhysicsEngine.ImpulsAng(gameObject, PhysicsEngine.objectsInScene[0]);
-            Debug.Log("A fine hit");
-            hasHit= true;
-            PhysicsEngine.objectsInScene[0].GetComponent<KinematicBody>().velocity = impulsList[2];
-            PhysicsEngine.objectsInScene[0].GetComponent<KinematicBody>().angularVelocity = impulsList[3];
-        }*/
-       foreach(var obj in PhysicsEngine.objectsInScene)
-        {
-            Vector3 collitionNormal, collitionPoint;
-            if (PhysicsEngine.GJKCollisionDetection(GetComponent<MeshFilter>(), obj.GetComponent<MeshFilter>(), out collitionPoint, out collitionNormal)){
-                PhysicsEngine.ImpulsAng(gameObject, obj, collitionNormal);
-                Debug.Log("A fine hit");
-                Debug.Log(collitionPoint);
-                Debug.Log(collitionNormal);
-                Debug.DrawRay(transform.position+collitionPoint, transform.position + collitionNormal *100, Color.red, 5f);
-
-            }
-        }
+        base.Update();
+      
         Vector3 Force = Vector3.zero, torq = Vector3.zero;
         if (pushTime > 0)
         {
@@ -75,7 +57,7 @@ public class ball : KinematicBody
 
         if ((linearVelocity[i] - angularVelocity[i]*radius < 0.1f && linearVelocity[i] - angularVelocity[i]*radius > -0.1f) || rollingWithoutSlipping[i])
             {
-                Debug.Log(i);
+               
                 rollingWithoutSlipping[i] = true;
             }
             else
