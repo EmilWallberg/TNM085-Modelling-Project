@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Mos.PhysicsEngine;
+using Unity.VisualScripting;
 
 [Serializable]
 public class ball : KinematicBody
@@ -23,6 +24,7 @@ public class ball : KinematicBody
 
     float h = 0.2f;
 
+    bool hasHit =false;
     private void Start()
     {
 
@@ -31,16 +33,25 @@ public class ball : KinematicBody
     // Update is called once per frame
     void Update()
     {
-    
+        if(transform.position.x >= 18&&!hasHit) {
+            
+            List<Vector3> impulsList = PhysicsEngine.ImpulsAng(gameObject, PhysicsEngine.objectsInScene[0]);
+            Debug.Log("A fine hit");
+            hasHit= true;
+            PhysicsEngine.objectsInScene[0].GetComponent<KinematicBody>().velocity = impulsList[2];
+            PhysicsEngine.objectsInScene[0].GetComponent<KinematicBody>().angularVelocity = impulsList[3];
+        }
+    /* 
        foreach(var obj in PhysicsEngine.objectsInScene)
         {
             Vector3 normal;
             if (PhysicsEngine.CheckCollision(GetComponent<MeshFilter>().mesh, obj.GetComponent<MeshFilter>().mesh,out normal)){
                 PhysicsEngine.ImpulsAng(gameObject, obj, normal);
                 Debug.Log("A fine hit");
+                
             }
         }
-  
+    */
         Vector3 Force = Vector3.zero, torq = Vector3.zero;
         if (pushTime > 0)
         {
@@ -63,7 +74,7 @@ public class ball : KinematicBody
 
         if ((linearVelocity[i] - angularVelocity[i]*radius < 0.1f && linearVelocity[i] - angularVelocity[i]*radius > -0.1f) || rollingWithoutSlipping[i])
             {
-                Debug.Log(i);
+                //Debug.Log(i);
                 rollingWithoutSlipping[i] = true;
             }
             else

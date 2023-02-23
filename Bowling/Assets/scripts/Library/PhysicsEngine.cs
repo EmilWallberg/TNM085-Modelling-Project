@@ -131,7 +131,7 @@ namespace Mos.PhysicsEngine
 
 
         //list[0] = nya v1, //list[1] = nya w1,  //list[2] = nya v2, //list[3] = nya w2, 
-        public static List<Vector3> ImpulsAng(GameObject colidObj1, GameObject colidObj2, Vector3 collisionNorm)
+        public static List<Vector3> ImpulsAng(GameObject colidObj1, GameObject colidObj2)
         {
             List<Vector3> listOfVel = new List<Vector3>();
 
