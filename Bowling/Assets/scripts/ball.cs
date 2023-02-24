@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Mos.PhysicsEngine;
+using Mos.PhysicsEngine1;
 using Unity.VisualScripting;
 
 [Serializable]
@@ -16,20 +16,22 @@ public class ball : KinematicBody
     [SerializeField]
     float delta = 0.0002f;
 
+    float widthPlayfield = 1f;
+
     Vector3 EulerAngle = Vector3.zero;
 
     bool[] rollingWithoutSlipping = new bool[] { false, false, false };
 
-    bool hasHit =false;
+    bool hasHit = false;
     private void Start()
     {
         base.Start();
         inertia = (2 * mass * Mathf.Pow(radius, 2.0f)) / 5; // I = (2mr^2)/5 for sphere
     }
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        base.FixedUpdate();
+        base.Update();
       
         if (pushTime > 0)
         {
@@ -64,21 +66,35 @@ public class ball : KinematicBody
             }
         }
         Vector3 acceleration = Force / mass;
-        linearVelocity = PhysicsEngine.RungeKutta(linearVelocity, acceleration, Time.fixedDeltaTime);
+        linearVelocity = PhysicsEngine.RungeKutta(linearVelocity, acceleration, PhysicsEngine.stepSize);
         Vector3 angularAcceleration = Torq / inertia;
-        angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+        angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, PhysicsEngine.stepSize);
+
+        if (Mathf.Abs(transform.position.z) > widthPlayfield / 2)
+        {
+            Debug.Log("Wall");
+            if (velocity.z > 0) {
+                Debug.Log(1);
+                linearVelocity.z = -velocity.z;
+            }
+            else {
+                Debug.Log(2);
+                linearVelocity.z = velocity.z;
+            }
+        }
 
         for (int i = 0; i < 3; i++)
         {
             if (rollingWithoutSlipping[i])
             {
                 velocity[i] = angularVelocity[i]*radius;
+                Debug.Log("Rolling" + i);
             }
             else velocity[i] = linearVelocity[i];
         }
-        
-        transform.position = PhysicsEngine.RungeKutta(transform.position, velocity, Time.fixedDeltaTime);
-        EulerAngle = PhysicsEngine.RungeKutta(EulerAngle, angularVelocity, Time.fixedDeltaTime);
+
+        transform.position = PhysicsEngine.RungeKutta(transform.position, velocity, PhysicsEngine.stepSize);
+        EulerAngle = PhysicsEngine.RungeKutta(EulerAngle, angularVelocity, PhysicsEngine.stepSize);
         transform.eulerAngles = new Vector3(EulerAngle.z, EulerAngle.y, -EulerAngle.x) * Mathf.Rad2Deg;
     }
 }

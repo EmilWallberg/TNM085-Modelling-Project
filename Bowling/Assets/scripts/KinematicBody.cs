@@ -1,4 +1,4 @@
-using Mos.PhysicsEngine;
+using Mos.PhysicsEngine1;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +20,7 @@ public class KinematicBody : MonoBehaviour
     {
         PhysicsEngine.objectsInScene.Add(gameObject);
     }
-    public void FixedUpdate()
+    public void Update()
     {
         Force = Torq = Vector3.zero;
         checkCollision(); 
@@ -34,13 +34,13 @@ public class KinematicBody : MonoBehaviour
             {
                 Vector3 collitionNormal, collitionPoint, linearImpuls, angularImpuls;
 
-                if (PhysicsEngine.GJKCollisionDetection(GetComponent<MeshFilter>(), obj.GetComponent<MeshFilter>(), out collitionPoint, out collitionNormal))
+                if (PhysicsEngine.GJKCollisionDetection(GetComponent<MeshCollider>(), obj.GetComponent<MeshCollider>(), out collitionPoint, out collitionNormal))
                 {
                     PhysicsEngine.ImpulsAngTest(gameObject, obj, collitionNormal, collitionPoint, out linearImpuls, out angularImpuls);
                     Debug.DrawRay(transform.position + collitionPoint, transform.position + collitionNormal * 100, Color.red, 5f);
 
-                    Force = linearImpuls / Time.fixedDeltaTime;
-                    Torq = -angularImpuls / Time.fixedDeltaTime;
+                    Force = linearImpuls / PhysicsEngine.stepSize;
+                    Torq = -angularImpuls / PhysicsEngine.stepSize;
 
                     //velocity += linearImpuls / mass / Time.fixedDeltaTime;
                     Debug.Log("Force: " + Force);
