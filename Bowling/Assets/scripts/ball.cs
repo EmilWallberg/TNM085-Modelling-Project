@@ -18,11 +18,7 @@ public class ball : KinematicBody
 
     Vector3 EulerAngle = Vector3.zero;
 
-    float my = .2f;
-
     bool[] rollingWithoutSlipping = new bool[] { false, false, false };
-
-    float h = 0.2f;
 
     bool hasHit =false;
     private void Start()
@@ -31,15 +27,14 @@ public class ball : KinematicBody
         inertia = (2 * mass * Mathf.Pow(radius, 2.0f)) / 5; // I = (2mr^2)/5 for sphere
     }
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
       
-        Vector3 Force = Vector3.zero, torq = Vector3.zero;
         if (pushTime > 0)
         {
             Force += startForce;
-            pushTime -= Time.deltaTime;
+            pushTime -= Time.fixedDeltaTime;
         }
         for (int i = 0; i < 3; i+=2)
         {
@@ -50,9 +45,9 @@ public class ball : KinematicBody
 
             float rollingFriction = 5 * mass * PhysicsEngine.gravity * delta / radius / 7;
             if (angularVelocity[i] > 0.001)
-                torq[i] -= rollingFriction;
+                Torq[i] -= rollingFriction;
             else if (angularVelocity[i] < -0.001)
-                torq[i] += rollingFriction;
+                Torq[i] += rollingFriction;
             else angularVelocity[i] = 0;
 
         if ((linearVelocity[i] - angularVelocity[i]*radius < 0.1f && linearVelocity[i] - angularVelocity[i]*radius > -0.1f) || rollingWithoutSlipping[i])
@@ -63,15 +58,15 @@ public class ball : KinematicBody
             else
             {
                 if (linearVelocity[i] >= 0)
-                    torq[i] += my * PhysicsEngine.gravity * radius;
+                    Torq[i] += my * PhysicsEngine.gravity * radius;
                 else
-                    torq[i] -= my * PhysicsEngine.gravity * radius;
+                    Torq[i] -= my * PhysicsEngine.gravity * radius;
             }
         }
-        Vector3 acceleration = 1 / mass * Force;
-        linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, h * Time.deltaTime);
-        Vector3 angularAcceleration = torq / inertia;
-        angularVelocity = PhysicsEngine.Euler(angularVelocity, angularAcceleration, h * Time.deltaTime);
+        Vector3 acceleration = Force / mass;
+        linearVelocity = PhysicsEngine.RungeKutta(linearVelocity, acceleration, Time.fixedDeltaTime);
+        Vector3 angularAcceleration = Torq / inertia;
+        angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, Time.fixedDeltaTime);
 
         for (int i = 0; i < 3; i++)
         {
@@ -82,8 +77,8 @@ public class ball : KinematicBody
             else velocity[i] = linearVelocity[i];
         }
         
-        transform.position = PhysicsEngine.Euler(transform.position, velocity, Time.deltaTime);
-        EulerAngle = PhysicsEngine.Euler(EulerAngle, angularVelocity, Time.deltaTime);
+        transform.position = PhysicsEngine.RungeKutta(transform.position, velocity, Time.fixedDeltaTime);
+        EulerAngle = PhysicsEngine.RungeKutta(EulerAngle, angularVelocity, Time.fixedDeltaTime);
         transform.eulerAngles = new Vector3(EulerAngle.z, EulerAngle.y, -EulerAngle.x) * Mathf.Rad2Deg;
     }
 }
