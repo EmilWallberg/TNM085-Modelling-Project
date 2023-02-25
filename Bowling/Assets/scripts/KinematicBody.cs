@@ -1,6 +1,4 @@
 using Mos.PhysicsEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class KinematicBody : MonoBehaviour

@@ -14,6 +14,8 @@ public class ball : KinematicBody
     [SerializeField]
     float delta = 0.0002f;
 
+    float widthPlayfield = 1f;
+
     Vector3 EulerAngle = Vector3.zero;
 
     bool[] rollingWithoutSlipping = new bool[] { false, false, false };
@@ -80,6 +82,19 @@ public class ball : KinematicBody
 
         Vector3 angularAcceleration = Torq / inertia;
         angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+
+        if (Mathf.Abs(transform.position.z) > widthPlayfield / 2)
+        {
+            Debug.Log("Wall");
+            if (velocity.z > 0) {
+                Debug.Log(1);
+                linearVelocity.z = -velocity.z;
+            }
+            else {
+                Debug.Log(2);
+                linearVelocity.z = velocity.z;
+            }
+        }
 
         for (int i = 0; i < 3; i++)
         {
