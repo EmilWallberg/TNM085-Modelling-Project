@@ -129,10 +129,10 @@ namespace Mos.PhysicsEngine
 
         }
 
-        public static bool GJKCollisionDetection(MeshFilter meshFilter, MeshFilter otherMeshFilter, out Vector3 collisionPoint, out Vector3 collisionNormal)
+        public static bool GJKCollisionDetection(MeshCollider meshCollider, MeshCollider otherMeshCollider, out Vector3 collisionPoint, out Vector3 collisionNormal)
         {
-            Transform meshTransform = meshFilter.transform;
-            Transform otherMeshTransform = otherMeshFilter.transform;
+            Transform meshTransform = meshCollider.transform;
+            Transform otherMeshTransform = otherMeshCollider.transform;
             collisionPoint = collisionNormal = Vector3.zero;
 
             if ((meshTransform.position - otherMeshTransform.position).magnitude > 1)
@@ -140,18 +140,18 @@ namespace Mos.PhysicsEngine
                 return false;
             }
 
-            Vector3[] vertices = new Vector3[meshFilter.mesh.vertices.Length];
-            Vector3[] otherVertices = new Vector3[otherMeshFilter.mesh.vertices.Length];
+            Vector3[] vertices = new Vector3[meshCollider.sharedMesh.vertices.Length];
+            Vector3[] otherVertices = new Vector3[otherMeshCollider.sharedMesh.vertices.Length];
 
             for (int i = 0; i < vertices.Length; i++)
             {
                 // Get the vertex in world space
-                vertices[i] = meshTransform.TransformPoint(meshFilter.mesh.vertices[i]);
+                vertices[i] = meshTransform.TransformPoint(meshCollider.sharedMesh.vertices[i]);
             }
             for (int i = 0; i < otherVertices.Length; i++)
             {
                 // Get the vertex in world space
-                otherVertices[i] = otherMeshTransform.TransformPoint(otherMeshFilter.mesh.vertices[i]);
+                otherVertices[i] = otherMeshTransform.TransformPoint(otherMeshCollider.sharedMesh.vertices[i]);
             }
 
             Vector3[] supportPoints = new Vector3[4];
