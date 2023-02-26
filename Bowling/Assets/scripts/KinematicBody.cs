@@ -74,7 +74,7 @@ public class KinematicBody : MonoBehaviour
         if (grounded)
         {
             GroundTimer = groundTime;
-            Debug.Log("Ground!");
+            Debug.Log(this.name + " Ground!");
             linearVelocity.y = 0;
         }else if(GroundTimer < 0)
         {
