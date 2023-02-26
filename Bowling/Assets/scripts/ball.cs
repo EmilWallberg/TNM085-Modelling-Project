@@ -83,6 +83,7 @@ public class ball : KinematicBody
         Vector3 angularAcceleration = Torq / inertia;
         angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, Time.fixedDeltaTime);
 
+        
         if (Mathf.Abs(transform.position.z) > widthPlayfield / 2)
         {
             Debug.Log("Wall");
@@ -95,6 +96,9 @@ public class ball : KinematicBody
                 linearVelocity.z = velocity.z;
             }
         }
+        
+ 
+
 
         for (int i = 0; i < 3; i++)
         {

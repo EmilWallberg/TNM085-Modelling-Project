@@ -24,7 +24,7 @@ public class pin : KinematicBody
             else
                 Force[i] += my * PhysicsEngine.gravity;
         }
-        Debug.Log(Force);
+        //Debug.Log(Force);
         Vector3 acceleration = Force / mass;
         linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, Time.fixedDeltaTime);
         transform.position = PhysicsEngine.Euler(transform.position, linearVelocity, Time.fixedDeltaTime);
