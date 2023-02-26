@@ -70,7 +70,6 @@ public class KinematicBody : MonoBehaviour
             Debug.DrawRay(ground.transform.TransformPoint(vertex), Vector3.up);
         }
 
-
         if (grounded)
         {
             GroundTimer = groundTime;
