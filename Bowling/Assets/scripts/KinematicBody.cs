@@ -30,9 +30,8 @@ public class KinematicBody : MonoBehaviour
     protected void FixedUpdate()
     {
         Force = Torq = Vector3.zero;
-        ground = GameObject.Find("ground").GetComponent<MeshCollider>();
         checkCollision();
-        CheckGround();
+        //CheckGround();
     }
 
     private void checkCollision()
@@ -67,7 +66,7 @@ public class KinematicBody : MonoBehaviour
 
         foreach(Vector3 vertex in ground.sharedMesh.vertices)
         {
-            Debug.DrawRay(ground.transform.TransformPoint(vertex), Vector3.up);
+            Debug.DrawRay(ground.transform.TransformPoint(vertex), Vector3.up/4);
         }
 
         if (grounded)
