@@ -90,7 +90,7 @@ namespace Mos.PhysicsEngine
             float J = (-(1 + fcr) * (Vector3.Dot(vRelativeVelocity, vColissionNormal)) /
                 ((1 / m1 + Vector3.Dot(vColissionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint1, vColissionNormal) / I1, vColissionPoint1))) +
                 (1 / m2 + Vector3.Dot(vColissionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint2, vColissionNormal) / I2, vColissionPoint2)))));
-            Debug.Log(J * vColissionNormal);
+         
 
             linearImpuls = J * vColissionNormal;
             angularImpuls = Vector3.Cross(vColissionPoint1, J * vColissionNormal) / I1 - Vector3.Cross(vColissionPoint1, J * vColissionNormal) / I2;
