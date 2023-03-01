@@ -8,6 +8,7 @@ namespace Mos.PhysicsEngine
     {
         public static List<GameObject> objectsInScene = new List<GameObject>();
         public static float gravity = 9.81f;
+        public static float timeStep = 0.5f;
         public static Vector3 Euler(Vector3 value, Vector3 f, float h)
         {
             return value + f * h;
@@ -82,7 +83,7 @@ namespace Mos.PhysicsEngine
             float I1 = colidObj1.GetComponent<KinematicBody>().inertia;
             float I2 = colidObj2.GetComponent<KinematicBody>().inertia;
 
-            float fcr = .45f;
+            float fcr = .07f;
             Vector3 vRelativeVelocity = v1 - v2;
             Vector3 vColissionPoint1 = collisionPoint - colidObj1.transform.position;
             Vector3 vColissionPoint2 = collisionPoint - colidObj2.transform.position;

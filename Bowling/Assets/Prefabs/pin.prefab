@@ -112,10 +112,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2e82c89e95b82f45acd13e00770ae6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  simulationTime: 0
   mass: 1.5
   radius: 0.0605
   inertia: 1
-  my: 0.4
+  my: 0.02
   linearVelocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}

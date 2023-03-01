@@ -5,9 +5,6 @@ using Mos.PhysicsEngine;
 [Serializable]
 public class ball : KinematicBody
 {
-
-    [SerializeField]
-    Vector3 startForce = new Vector3(200, 0, 100);
     [SerializeField]
     float pushTime = 4f;
 
@@ -19,15 +16,11 @@ public class ball : KinematicBody
     Vector3 EulerAngle = Vector3.zero;
 
     bool[] rollingWithoutSlipping = new bool[] { false, false, false };
-
-    bool hasHit = false;
     private void Start()
     {
         base.Start();
         inertia = (2 * mass * Mathf.Pow(radius, 2.0f)) / 5; // I = (2mr^2)/5 for sphere
     }
-
-
 
     const float RollingFrictionCoefficient = 5f / 7f;
     const float AngularVelocityThreshold = 0.001f;
@@ -37,12 +30,6 @@ public class ball : KinematicBody
     void FixedUpdate()
     {
         base.FixedUpdate();
-
-        if (pushTime > 0)
-        {
-            Force += startForce;
-            pushTime -= Time.fixedDeltaTime;
-        }
 
         float frictionCoefficient = my * PhysicsEngine.gravity;
         float rollingFrictionCoefficient = RollingFrictionCoefficient * mass * PhysicsEngine.gravity * delta / radius;
@@ -78,10 +65,10 @@ public class ball : KinematicBody
         }
 
         Vector3 acceleration = Force / mass;
-        linearVelocity = PhysicsEngine.RungeKutta(linearVelocity, acceleration, Time.fixedDeltaTime);
+        linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, timeStep);
 
         Vector3 angularAcceleration = Torq / inertia;
-        angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+        angularVelocity = PhysicsEngine.Euler(angularVelocity, angularAcceleration, timeStep);
 
         if (Mathf.Abs(transform.position.z) > widthPlayfield / 2)
         {
@@ -108,7 +95,7 @@ public class ball : KinematicBody
             }
         }
 
-        transform.position = PhysicsEngine.RungeKutta(transform.position, velocity, Time.fixedDeltaTime);
+        transform.position = PhysicsEngine.Euler(transform.position, velocity, timeStep);
         apply_rotation(angularVelocity);
     }
 

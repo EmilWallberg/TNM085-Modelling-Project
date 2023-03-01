@@ -24,13 +24,13 @@ public class pin : KinematicBody
             else
                 Force[i] += my * PhysicsEngine.gravity;
         }
-        Debug.Log(Force);
+        //Debug.Log(Force);
         Vector3 acceleration = Force / mass;
-        linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, Time.fixedDeltaTime);
-        transform.position = PhysicsEngine.Euler(transform.position, linearVelocity, Time.fixedDeltaTime);
+        linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, timeStep);
+        transform.position = PhysicsEngine.Euler(transform.position, linearVelocity, timeStep);
 
         Vector3 angularAcceleration = Torq;
-        angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, Time.fixedDeltaTime);
+        angularVelocity = PhysicsEngine.Euler(angularVelocity, angularAcceleration, timeStep);
         apply_rotation(angularVelocity);
     }
 

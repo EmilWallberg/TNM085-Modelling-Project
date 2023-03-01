@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class KinematicBody : MonoBehaviour
 {
+    public float simulationTime = 0;
     public float mass = 1;
     public float radius = 1;
     public float inertia = 1;
@@ -17,18 +18,22 @@ public class KinematicBody : MonoBehaviour
     public bool grounded = false;
     public MeshCollider ground;
     private const float groundTime = 0.05f;
-    private float GroundTimer = 0.2f;
+    private float GroundTimer = 0.05f;
+
+    protected float timeStep;
 
 
     private MeshCollider colider;
     protected void Start()
     {
+        timeStep = Time.fixedDeltaTime * PhysicsEngine.timeStep;
         PhysicsEngine.objectsInScene.Add(gameObject);
         ground = GameObject.Find("ground").GetComponent<MeshCollider>();
         colider = GetComponent<MeshCollider>();
     }
     protected void FixedUpdate()
     {
+        simulationTime += timeStep;
         Force = Torq = Vector3.zero;
         checkCollision();
         //CheckGround();
@@ -40,18 +45,18 @@ public class KinematicBody : MonoBehaviour
         {
             if(this != obj)
             {
-                Vector3 collitionNormal, collitionPoint, linearImpuls, angularImpuls;
+                Vector3 collisionNormal, collisionPoint, linearImpuls, angularImpuls;
 
-                if (PhysicsEngine.GJKCollisionDetection(colider, obj.GetComponent<MeshCollider>(), out collitionPoint, out collitionNormal))
+                if (PhysicsEngine.GJKCollisionDetection(colider, obj.GetComponent<MeshCollider>(), out collisionPoint, out collisionNormal))
                 {
-                    PhysicsEngine.ImpulsAngTest(gameObject, obj, collitionNormal, collitionPoint, out linearImpuls, out angularImpuls);
-                    Debug.DrawRay(transform.position + collitionPoint, transform.position + collitionNormal * 100, Color.red, 5f);
+                    PhysicsEngine.ImpulsAngTest(gameObject, obj, collisionNormal, collisionPoint, out linearImpuls, out angularImpuls);
+                    Debug.DrawRay(transform.position + collisionPoint, transform.position + collisionNormal, Color.red, timeStep * 8);
 
-                    //Force = linearImpuls / Time.fixedDeltaTime;
-                    Torq = -angularImpuls / Time.fixedDeltaTime;
-
-                    linearVelocity += linearImpuls / mass / Time.fixedDeltaTime;
-                    Debug.Log("Force: " + Force);
+                    Force = linearImpuls / timeStep;
+                    Torq = -angularImpuls;
+                    Debug.Log(name + " | " + linearImpuls / mass);
+                    //linearVelocity += linearImpuls / mass;
+                    //Debug.Log("Force: " + Force);
                 }
             }
             
@@ -60,8 +65,8 @@ public class KinematicBody : MonoBehaviour
 
     private void CheckGround()
     {
-        Vector3 collitionNormal, collitionPoint;
-        grounded = PhysicsEngine.GJKCollisionDetection(GetComponent<MeshCollider>(), ground, out collitionPoint, out collitionNormal);
+        Vector3 collisionNormal, collisionPoint;
+        grounded = PhysicsEngine.GJKCollisionDetection(GetComponent<MeshCollider>(), ground, out collisionPoint, out collisionNormal);
         GroundTimer -= Time.fixedDeltaTime;
 
         foreach(Vector3 vertex in ground.sharedMesh.vertices)
@@ -76,7 +81,7 @@ public class KinematicBody : MonoBehaviour
             linearVelocity.y = 0;
         }else if(GroundTimer < 0)
         {
-            Force.y -= PhysicsEngine.gravity;
+            Force.y -= PhysicsEngine.gravity * mass;
         }
     }
 
