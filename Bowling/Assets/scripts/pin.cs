@@ -19,19 +19,20 @@ public class pin : KinematicBody
 
         for (int i = 0; i < 3; i += 2)
         {
-            if (linearVelocity[i] >= 0)
-                Force[i] -= my * PhysicsEngine.gravity;
-            else
-                Force[i] += my * PhysicsEngine.gravity;
+            if (velocity[i] > 0.001f)
+                Force[i] -= my * PhysicsEngine.gravity * mass;
+            else if (velocity[i] < 0.001f)
+                Force[i] += my * PhysicsEngine.gravity * mass;
+            else velocity[i] = 0;
         }
         //Debug.Log(Force);
         Vector3 acceleration = Force / mass;
-        linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, timeStep);
-        transform.position = PhysicsEngine.Euler(transform.position, linearVelocity, timeStep);
+        velocity = PhysicsEngine.RungeKutta(velocity, acceleration, timeStep);
+        transform.position = PhysicsEngine.RungeKutta(transform.position, velocity, timeStep);
 
         Vector3 angularAcceleration = Torq;
-        angularVelocity = PhysicsEngine.Euler(angularVelocity, angularAcceleration, timeStep);
-        apply_rotation(angularVelocity);
+        //angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, timeStep);
+        apply_rotation(angularVelocity * timeStep * Mathf.Rad2Deg);
     }
 
 }

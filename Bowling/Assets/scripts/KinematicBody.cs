@@ -42,10 +42,10 @@ public class KinematicBody : MonoBehaviour
     {
         simulationTime += timeStep;
         Force = Torq = Vector3.zero;
-        checkCollision();
+        //checkCollision();
         //checkWallCollision();
         tempGroundcheck();
-        tempWallcheck();
+        //tempWallcheck();
         //CheckGround();
     }
 
@@ -59,30 +59,34 @@ public class KinematicBody : MonoBehaviour
 
                 if (PhysicsEngine.GJKCollisionDetection(colider, obj.GetComponent<MeshCollider>(), out collisionPoint, out collisionNormal))
                 {
-                    PhysicsEngine.ImpulsAngTest(gameObject, obj, collisionNormal, collisionPoint, out linearImpuls, out angularImpuls);
-                    Debug.DrawRay(transform.position + collisionPoint, transform.position + collisionNormal, Color.red, timeStep * 8);
+                    //float energy = (mass * Mathf.Pow(velocity.magnitude, 2f) / 2f + obj.GetComponent<KinematicBody>().mass * Mathf.Pow(obj.GetComponent<KinematicBody>().velocity.magnitude, 2f) / 2f);
+                    //Debug.Log("Before: " + energy);
 
-                    Force = linearImpuls / timeStep;
-                    Torq = -angularImpuls;
-                    Debug.Log(name + " | " + linearImpuls / mass);
+                    PhysicsEngine.ImpulsAng(gameObject, obj, collisionNormal, collisionPoint, out linearImpuls, out angularImpuls);
+                    Debug.DrawRay(transform.position - collisionPoint, transform.position - collisionPoint + collisionNormal, Color.red, timeStep * 8);
+
+                    //Force = linearImpuls / timeStep;
+                    //Torq =  angularImpuls / timeStep;
+                    //Debug.Log(name + " | " + linearImpuls / mass);
                     //linearVelocity += linearImpuls / mass;
                     //Debug.Log("Force: " + Force);
-                    PhysicsEngine.ImpulsAngTest(gameObject, obj, collisionNormal, collisionPoint, out linearImpuls, out angularImpuls);
+                    //PhysicsEngine.ImpulsAngTest(gameObject, obj, collisionNormal, collisionPoint, out linearImpuls, out angularImpuls);
    
 
                     //Force = linearImpuls / Time.fixedDeltaTime;
                     /*
-           Vector3 newV1 = v1 + (J * vColissionNormal) / m1;
-           Vector3 newW1 = w1 + (Vector3.Cross(vColissionPoint1, J * vColissionNormal)) / m1;
-           Vector3 newV2 = v2 - (J * vColissionNormal) / m2; ;
-           Vector3 newW2 = w2 - (Vector3.Cross(vColissionPoint2, J * vColissionNormal)) / m2;
+                   Vector3 newV1 = v1 + (J * vColissionNormal) / m1;
+                   Vector3 newW1 = w1 + (Vector3.Cross(vColissionPoint1, J * vColissionNormal)) / m1;
+                   Vector3 newV2 = v2 - (J * vColissionNormal) / m2; ;
+                   Vector3 newW2 = w2 - (Vector3.Cross(vColissionPoint2, J * vColissionNormal)) / m2;
 
-           Debug.Log("v2 = " + v2);
+                   Debug.Log("v2 = " + v2);
 
-           listOfVel.Add(newV1); listOfVel.Add(newW1); listOfVel.Add(newV2); listOfVel.Add(newW2);
-           */
-                    //angularVelocity += Vector3.Cross(collisionPoint - transform.position, linearImpuls)/Time.fixedDeltaTime;
-                    
+                   listOfVel.Add(newV1); listOfVel.Add(newW1); listOfVel.Add(newV2); listOfVel.Add(newW2);
+                   */
+                    //angularVelocity += Vector3.Cross(collisionPoint - transform.position, linearImpuls);
+                    //energy = (mass * Mathf.Pow(velocity.magnitude, 2f) / 2f + obj.GetComponent<KinematicBody>().mass * Mathf.Pow(obj.GetComponent<KinematicBody>().velocity.magnitude, 2f) / 2f);
+                    //Debug.Log("After: " + energy);
                 }
             }
             
@@ -117,7 +121,7 @@ public class KinematicBody : MonoBehaviour
 
     protected void apply_rotation(Vector3 EulerAngles)
     {
-        transform.rotation *= Quaternion.AngleAxis(EulerAngles.x, Vector3.back);
+        transform.rotation *= Quaternion.AngleAxis(EulerAngles.x, Vector3.forward);
         transform.rotation *= Quaternion.AngleAxis(EulerAngles.z, Vector3.right);
         transform.rotation *= Quaternion.AngleAxis(EulerAngles.y, Vector3.up);
     }

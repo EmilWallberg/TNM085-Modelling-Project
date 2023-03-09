@@ -23,7 +23,7 @@ public class ball : KinematicBody
     }
 
     const float RollingFrictionCoefficient = 5f / 7f;
-    const float AngularVelocityThreshold = 0.001f;
+    const float AngularVelocityThreshold = 0.01f;
     const float RollingWithoutSlippingThreshold = 0.1f;
 
     // Update is called once per frame
@@ -31,7 +31,7 @@ public class ball : KinematicBody
     {
         base.FixedUpdate();
 
-        float frictionCoefficient = my * PhysicsEngine.gravity;
+        float frictionCoefficient = my * PhysicsEngine.gravity * mass;
         float rollingFrictionCoefficient = RollingFrictionCoefficient * mass * PhysicsEngine.gravity * delta / radius;
 
         for (int i = 0; i < 3; i += 2)
@@ -65,10 +65,10 @@ public class ball : KinematicBody
         }
 
         Vector3 acceleration = Force / mass;
-        linearVelocity = PhysicsEngine.Euler(linearVelocity, acceleration, timeStep);
+        linearVelocity = PhysicsEngine.RungeKutta(linearVelocity, acceleration, timeStep);
 
         Vector3 angularAcceleration = Torq / inertia;
-        angularVelocity = PhysicsEngine.Euler(angularVelocity, angularAcceleration, timeStep);
+        angularVelocity = PhysicsEngine.RungeKutta(angularVelocity, angularAcceleration, timeStep);
 
         
         if (Mathf.Abs(transform.position.z) > widthPlayfield / 2)
@@ -83,9 +83,6 @@ public class ball : KinematicBody
                 linearVelocity.z = velocity.z;
             }
         }
-        
- 
-
 
         for (int i = 0; i < 3; i++)
         {
@@ -99,8 +96,8 @@ public class ball : KinematicBody
             }
         }
 
-        transform.position = PhysicsEngine.Euler(transform.position, velocity, timeStep);
-        apply_rotation(angularVelocity);
+        transform.position = PhysicsEngine.RungeKutta(transform.position, velocity, timeStep);
+        apply_rotation(new Vector3(-angularVelocity.x, angularVelocity.y, angularVelocity.z) *timeStep * Mathf.Rad2Deg);
     }
 
 }

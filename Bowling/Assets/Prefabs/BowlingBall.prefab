@@ -111,6 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 786f02d851c2b47439b19dd1fe6fe844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  simulationTime: 0
   mass: 6.8
   radius: 0.10915
   inertia: 1
@@ -120,6 +121,11 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   grounded: 0
   ground: {fileID: 0}
-  startForce: {x: 200, y: 0, z: 100}
+  wall1: {fileID: 0}
+  wall2: {fileID: 0}
+  wM1: {fileID: 0}
+  wM2: {fileID: 0}
+  hit_wall1: 0
+  hit_wall2: 0
   pushTime: 4
   delta: 0.0002
