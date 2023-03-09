@@ -35,8 +35,6 @@ public class KinematicBody : MonoBehaviour
         PhysicsEngine.objectsInScene.Add(gameObject);
         ground = GameObject.Find("ground").GetComponent<MeshCollider>();
         colider = GetComponent<MeshCollider>();
-
- 
     }
     protected void FixedUpdate()
     {
@@ -62,7 +60,7 @@ public class KinematicBody : MonoBehaviour
                     //float energy = (mass * Mathf.Pow(velocity.magnitude, 2f) / 2f + obj.GetComponent<KinematicBody>().mass * Mathf.Pow(obj.GetComponent<KinematicBody>().velocity.magnitude, 2f) / 2f);
                     //Debug.Log("Before: " + energy);
 
-                    PhysicsEngine.ImpulsAng(gameObject, obj, collisionNormal, collisionPoint, out linearImpuls, out angularImpuls);
+                    PhysicsEngine.ImpulsAng(gameObject, obj, collisionNormal, collisionPoint);
                     Debug.DrawRay(transform.position - collisionPoint, transform.position - collisionPoint + collisionNormal, Color.red, timeStep * 8);
 
                     //Force = linearImpuls / timeStep;

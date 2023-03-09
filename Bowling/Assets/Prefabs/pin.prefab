@@ -116,9 +116,15 @@ MonoBehaviour:
   mass: 1.5
   radius: 0.0605
   inertia: 1
-  my: 0.02
+  my: 0.2
   linearVelocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
   grounded: 0
   ground: {fileID: 0}
+  wall1: {fileID: 0}
+  wall2: {fileID: 0}
+  wM1: {fileID: 0}
+  wM2: {fileID: 0}
+  hit_wall1: 0
+  hit_wall2: 0
