@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,23 +14,8 @@ namespace Mos.PhysicsEngine
             return value + f * h;
         }
 
-        public static Vector3 RungeKutta(Vector3 value, Vector3 f, float deltaTime)
-        {
-            Vector3 k1 = f * deltaTime;
-            Vector3 k2 = (f + k1 / 2) * deltaTime;
-            Vector3 k3 = (f + k2 / 2) * deltaTime;
-            Vector3 k4 = (f + k3) * deltaTime;
-
-            Vector3 newValue = value + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
-            return newValue;
-        }
-
-
-        //list[0] = nya v1, //list[1] = nya w1,  //list[2] = nya v2, //list[3] = nya w2, 
         public static void ImpulsAng(GameObject colidObj1, GameObject colidObj2, Vector3 collisionNormal, Vector3 collisionPoint)
         {
-            List<Vector3> listOfVel = new List<Vector3>();
-
             KinematicBody KB1 = colidObj1.GetComponent<KinematicBody>();
             KinematicBody KB2 = colidObj2.GetComponent<KinematicBody>();
 
@@ -44,8 +28,6 @@ namespace Mos.PhysicsEngine
             float m2 = KB2.mass;
             float I1 = KB1.inertia;
             float I2 = KB2.inertia;
-            Vector3 pos1 = colidObj1.transform.position;
-            Vector3 pos2 = colidObj2.transform.position;
 
             float rotationEnergy = I1 * Mathf.Pow(w1.magnitude, 2) + I2 * Mathf.Pow(w2.magnitude, 2);
             float Energy = m1 * Mathf.Pow(v1.magnitude, 2) + m2 * Mathf.Pow(v2.magnitude, 2);
@@ -53,10 +35,6 @@ namespace Mos.PhysicsEngine
             Debug.Log("R before: " + Energy + rotationEnergy);
             float fcr = 1f;
             Vector3 vRelativeVelocity = v1 - v2;
-            Vector3 vColissionNormal = pos1 - pos2;
-            //Vector3 vColissionNormal = collisionNormal;
-            //vColissionNormal = vColissionNormal.normalized;
-            vColissionNormal = collisionNormal;
 
             collisionPoint = colidObj1.transform.TransformPoint(collisionPoint);
             Vector3 vColissionPoint1 = collisionPoint - colidObj1.transform.position;
@@ -64,36 +42,26 @@ namespace Mos.PhysicsEngine
             Debug.DrawLine(vColissionPoint1, vColissionPoint1 * 1.01f, Color.green);
             Debug.DrawLine(vColissionPoint2, vColissionPoint2 * 1.01f, Color.red);
 
-            //Vector3.Dot(v1, v2);
-            //Vector3.Cross(v1, v2);
-            float J = (-(1 + fcr) * (Vector3.Dot(vRelativeVelocity, vColissionNormal)) /
+            float J = (-(1 + fcr) * (Vector3.Dot(vRelativeVelocity, collisionNormal)) /
                 ((1 / m1 + 1 / m2) +
-                (Vector3.Dot(vColissionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint1, vColissionNormal) / I1, vColissionPoint1))) +
-                (Vector3.Dot(vColissionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint2, vColissionNormal) / I2, vColissionPoint2)))
+                (Vector3.Dot(collisionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint1, collisionNormal) / I1, vColissionPoint1))) +
+                (Vector3.Dot(collisionNormal, Vector3.Cross(Vector3.Cross(vColissionPoint2, collisionNormal) / I2, vColissionPoint2)))
                 ));
-            Debug.Log(J * vColissionNormal);
+            Debug.Log(J * collisionNormal);
 
-            //KB1.linearVelocity = v1 +(J * vColissionNormal) / m1;
-            //KB1.angularVelocity += (Vector3.Cross(vColissionPoint1, J * vColissionNormal)) / I1;
-            //KB2.linearVelocity = v2 - (J * vColissionNormal) / m2;
-            //KB2.angularVelocity -= (Vector3.Cross(vColissionPoint2, J * vColissionNormal)) / I2;
 
             float u = 0.2f;
-            Vector3 T = Vector3.Cross(Vector3.Cross(vRelativeVelocity, vColissionNormal), vColissionNormal);
+            Vector3 T = Vector3.Cross(Vector3.Cross(vRelativeVelocity, collisionNormal), collisionNormal);
             T = T / (Vector3.Magnitude(T));
 
-            KB1.linearVelocity = v1 + (J * vColissionNormal + (u*J)*T) / m1;
-            KB1.angularVelocity = w1 + (Vector3.Cross(vColissionPoint1, J * vColissionNormal + (u * J) * T)) / I1;
-            KB2.linearVelocity = v2 - (J * vColissionNormal + (u * J) * T) / m2;
-            KB2.angularVelocity = w2 - (Vector3.Cross(vColissionPoint2, J * vColissionNormal + (u * J) * T)) / I2;
+            KB1.linearVelocity = v1 + (J * collisionNormal + (u*J)*T) / m1;
+            KB1.angularVelocity = w1 + (Vector3.Cross(vColissionPoint1, J * collisionNormal + (u * J) * T)) / I1;
+            KB2.linearVelocity = v2 - (J * collisionNormal + (u * J) * T) / m2;
+            KB2.angularVelocity = w2 - (Vector3.Cross(vColissionPoint2, J * collisionNormal + (u * J) * T)) / I2;
 
             rotationEnergy = I1 * Mathf.Pow(KB1.angularVelocity.magnitude, 2) + I2 * Mathf.Pow(KB2.angularVelocity.magnitude, 2);
             Energy = m1 * Mathf.Pow(v1.magnitude, 2) + m2 * Mathf.Pow(v2.magnitude, 2);
             Debug.Log("R after: " + Energy + rotationEnergy);
-            //Debug.Log("v2 = " + v2);
-
-            //listOfVel.Add(newV1); listOfVel.Add(newW1); listOfVel.Add(newV2); listOfVel.Add(newW2);
-
         }
 
         public static void ImpulsAngTest(GameObject colidObj1, GameObject colidObj2, Vector3 vColissionNormal, Vector3 collisionPoint, out Vector3 linearImpuls, out Vector3 angularImpuls)
@@ -119,64 +87,27 @@ namespace Mos.PhysicsEngine
             angularImpuls = Vector3.Cross(vColissionPoint1, J * vColissionNormal) / I2 - Vector3.Cross(vColissionPoint1, J * vColissionNormal) / I1;
         }
 
-
-        //list[0] = nya v1, //list[1] = nya v2,
-        public static List<Vector3> Impuls(GameObject colidObj1, GameObject colidObj2)
-        {
-            List<Vector3> listOfAngV = new List<Vector3>();
-
-            float r = colidObj1.GetComponent<KinematicBody>().radius + colidObj1.GetComponent<KinematicBody>().radius;
-            Vector3 d = colidObj1.transform.position - colidObj2.transform.position;
-            float s = d.magnitude - r;
-
-            d.Normalize();
-            Vector3 vCollisionNormal = d;
-
-            Vector3 v1 = colidObj1.GetComponent<KinematicBody>().velocity;
-            Vector3 v2 = colidObj2.GetComponent<KinematicBody>().velocity;
-            float m1 = colidObj1.GetComponent<KinematicBody>().mass;
-            float m2 = colidObj2.GetComponent<KinematicBody>().mass;
-
-            Vector3 vRelativeVelocity = v1 - v2;
-
-            float fcr = 1;
-            float Vrn = Vector3.Dot(vRelativeVelocity, vCollisionNormal);
-
-            float J = (-(1 + fcr) * (Vector3.Dot(vRelativeVelocity, vCollisionNormal)) / ((Vector3.Dot(vCollisionNormal, vCollisionNormal)) * (1 / m1 + 1 / m2)));
-
-            Vector3 newV1 = v1 + (J * vCollisionNormal) / m1;
-            Vector3 newV2 = v1 - (J * vCollisionNormal) / m2;
-
-            listOfAngV.Add(newV1); listOfAngV.Add(newV2);
-
-            return listOfAngV;
-
-        }
-
+        // Soruce of how to implment the GJKCollisionDetection
+        // https://www.youtube.com/watch?v=ajv46BSqcK4
         public static bool GJKCollisionDetection(MeshCollider meshCollider, MeshCollider otherMeshCollider, out Vector3 collisionPoint, out Vector3 collisionNormal)
         {
             Transform meshTransform = meshCollider.transform;
             Transform otherMeshTransform = otherMeshCollider.transform;
             collisionPoint = collisionNormal = Vector3.zero;
 
-            if ((meshTransform.position - otherMeshTransform.position).magnitude > 1)
-            {
-                return false;
-            }
-
             Vector3[] vertices = new Vector3[meshCollider.sharedMesh.vertices.Length];
             Vector3[] otherVertices = new Vector3[otherMeshCollider.sharedMesh.vertices.Length];
 
+            //Move the vertices from local to world space
             for (int i = 0; i < vertices.Length; i++)
             {
-                // Get the vertex in world space
                 vertices[i] = meshTransform.TransformPoint(meshCollider.sharedMesh.vertices[i]);
             }
             for (int i = 0; i < otherVertices.Length; i++)
             {
-                // Get the vertex in world space
                 otherVertices[i] = otherMeshTransform.TransformPoint(otherMeshCollider.sharedMesh.vertices[i]);
             }
+
 
             Vector3[] supportPoints = new Vector3[4];
             int simplexCount = 0;
@@ -295,7 +226,6 @@ namespace Mos.PhysicsEngine
             }
             else
             {
-
                 // count == 4
                 Vector3 a = simplex[3];
                 Vector3 b = simplex[2];
@@ -349,6 +279,7 @@ namespace Mos.PhysicsEngine
             }
         }
 
+
         private static Vector3 Support(Vector3[] vertices, Vector3[] otherVertices, Vector3 direction)
         {
             Vector3 support1 = GetFurthestPointInDirection(vertices, direction);
@@ -360,7 +291,6 @@ namespace Mos.PhysicsEngine
         {
             int index = 0;
             float maxDot = Vector3.Dot(vertices[0], direction);
-
             for (int i = 1; i < vertices.Length; i++)
             {
                 float dot = Vector3.Dot(vertices[i], direction);

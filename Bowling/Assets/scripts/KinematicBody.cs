@@ -22,7 +22,6 @@ public class KinematicBody : MonoBehaviour
 
     protected float timeStep;
 
-
     private MeshCollider colider;
 
     public GameObject wall1, wall2;
@@ -43,7 +42,7 @@ public class KinematicBody : MonoBehaviour
         //checkCollision();
         //checkWallCollision();
         tempGroundcheck();
-        //tempWallcheck();
+        WallCollision();
         //CheckGround();
     }
 
@@ -117,45 +116,23 @@ public class KinematicBody : MonoBehaviour
         }
     }
 
+    protected virtual void HandleImpact() { }
+
     protected void apply_rotation(Vector3 EulerAngles)
     {
         transform.rotation *= Quaternion.AngleAxis(EulerAngles.x, Vector3.forward);
         transform.rotation *= Quaternion.AngleAxis(EulerAngles.z, Vector3.right);
         transform.rotation *= Quaternion.AngleAxis(EulerAngles.y, Vector3.up);
     }
-
-    private void checkWallCollision()
-    {
-
-        Vector3 collisionNormal, collisionPoint;
-        wM1 = wall1.GetComponent<MeshCollider>();
-        wM2 = wall2.GetComponent<MeshCollider>();
-        hit_wall1 = PhysicsEngine.GJKCollisionDetection(colider, wM1, out collisionNormal, out collisionPoint);
-        hit_wall2 = PhysicsEngine.GJKCollisionDetection(colider, wM2, out collisionNormal, out collisionPoint);
-
-        if (hit_wall1)
-        {
-            Debug.Log(this.name + " hitwall1");
-        }
-        else if(hit_wall2) { Debug.Log(this.name + " hitwall1"); }
-    }
-    private void tempWallcheck()
+    private void WallCollision()
     {
         float boundry = 0.5f-this.radius;
         
-        if (transform.position.z < -boundry||transform.position.z>boundry)
+        if (transform.position.z < -boundry || transform.position.z > boundry)
         {
-            float energyLoss = 0.95f;
-            float angle = Mathf.Atan2(linearVelocity.x, linearVelocity.z) * Mathf.Rad2Deg;
-
-            Vector3 axis = Vector3.Cross(transform.position, Vector3.right);
-
-            Vector3 rot = Quaternion.AngleAxis(angle, axis) * transform.position;
-            linearVelocity = rot * energyLoss;
-       
-
+            linearVelocity.z = -linearVelocity.z;
+            HandleImpact();
         }
-
     }
     private void tempGroundcheck()
     {

@@ -49,7 +49,7 @@ public class ball : KinematicBody
 
             if (!rollingWithoutSlipping[i])
             {
-                if (Mathf.Abs(linearVelocity[i]-angularVelocity[i]*radius) < RollingWithoutSlippingThreshold)
+                if (Mathf.Abs(linearVelocity[i]-angularVelocity[i]*radius) < RollingWithoutSlippingThreshold || rollingWithoutSlipping[i])
                 {
                     rollingWithoutSlipping[i] = true;
                 }
@@ -82,7 +82,13 @@ public class ball : KinematicBody
         }
 
         transform.position = PhysicsEngine.Euler(transform.position, velocity, timeStep);
-        apply_rotation(new Vector3(-angularVelocity.x, angularVelocity.y, angularVelocity.z) *timeStep * Mathf.Rad2Deg);
+        apply_rotation(new Vector3(-angularVelocity.x, angularVelocity.y, angularVelocity.z) * timeStep * Mathf.Rad2Deg);
+    }
+
+    protected override void HandleImpact()
+    {
+        base.HandleImpact();
+        rollingWithoutSlipping[0] = rollingWithoutSlipping[1] = rollingWithoutSlipping[2] = false;
     }
 
 }
